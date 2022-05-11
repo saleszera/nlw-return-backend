@@ -7,13 +7,13 @@ interface SubmitFeedbackCaseRequest {
   screenshot?: string;
 }
 
-export class SubmitFeedbackUseCase {
+export class FeedbackUseCase {
   constructor(
     private feedbacksRepository: FeedbacksRepository,
     private mailAdapter: MailAdapter
   ) {}
 
-  async execute(request: SubmitFeedbackCaseRequest) {
+  async create(request: SubmitFeedbackCaseRequest) {
     const { type, comment, screenshot } = request;
     if (!type) {
       throw new Error('Type is required.');
@@ -43,5 +43,11 @@ export class SubmitFeedbackUseCase {
         '</div>',
       ].join('\n'),
     });
+  }
+
+  async get() {
+    const feedbacks = await this.feedbacksRepository.get();
+
+    return feedbacks;
   }
 }
