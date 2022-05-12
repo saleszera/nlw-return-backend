@@ -6,6 +6,7 @@ export interface FeedbackCreateData {
 
 export interface FeedbackGetData {
   id: string;
+  type: string;
   comment: string;
   screenshot: string | null | undefined;
 }
@@ -13,4 +14,5 @@ export interface FeedbackGetData {
 export interface FeedbacksRepository {
   create: (data: FeedbackCreateData) => Promise<void>;
   get: () => Promise<FeedbackGetData[]>;
+  destroy: (id: string) => Promise<void>;
 }

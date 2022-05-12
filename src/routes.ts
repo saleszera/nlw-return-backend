@@ -16,9 +16,15 @@ const feedbackUseCase = new FeedbackUseCase(
 routes.post('/feedbacks', async (req, res) => {
   const { type, comment, screenshot } = req.body;
 
-  await feedbackUseCase.create({ type, comment, screenshot });
+  try {
+    await feedbackUseCase.create({ type, comment, screenshot });
 
-  return res.status(201).send();
+    return res.status(201).send();
+  } catch (error: any) {
+    return res
+      .status(400)
+      .json({ data: { error: { code: 400, message: error.message } } });
+  }
 });
 
 routes.get('/feedbacks', async (_, res) => {
@@ -29,4 +35,17 @@ routes.get('/feedbacks', async (_, res) => {
   }
 
   return res.status(200).json({ data: feedbacks });
+});
+
+routes.delete('/feedbacks/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await feedbackUseCase.destroy(id);
+
+    return res.status(200).send();
+  } catch (error: any) {
+    return res
+      .status(400)
+      .json({ data: { error: { code: 400, message: error.message } } });
+  }
 });

@@ -1,13 +1,12 @@
-import { FeedbackUseCase } from './feedback-use-case';
+import { PrismaFeeedbacksRepository } from '../../prisma/fake-prisma-feedbacks-repository';
+import { FeedbackUseCase } from '../../use-cases/feedback-use-case';
 
-const createFeedbackSpy = jest.fn();
-const getFeedbackSpy = jest.fn();
 const sendMailSpy = jest.fn();
 
-const feedback = new FeedbackUseCase(
-  { create: createFeedbackSpy, get: getFeedbackSpy },
-  { sendMail: sendMailSpy }
-);
+const fakeFeedbacksRepository = new PrismaFeeedbacksRepository();
+const feedback = new FeedbackUseCase(fakeFeedbacksRepository, {
+  sendMail: sendMailSpy,
+});
 
 describe('Submit feedback', () => {
   it('should be able to submit a feedback', async () => {
@@ -19,7 +18,6 @@ describe('Submit feedback', () => {
       })
     ).resolves.not.toThrow();
 
-    expect(createFeedbackSpy).toHaveBeenCalled();
     expect(sendMailSpy).toHaveBeenCalled();
   });
 
@@ -57,7 +55,22 @@ describe('Submit feedback', () => {
 describe('Get feedbacks', () => {
   it('should be able to get all feedbacks', async () => {
     await expect(feedback.get()).resolves.not.toThrow();
+  });
+});
 
-    expect(getFeedbackSpy).toHaveBeenCalled();
+describe('Delete an feedback', () => {
+  it('Should not be able to delete an feedback with invalid ID', async () => {
+    await expect(feedback.destroy('test-123')).rejects.toThrow();
+  });
+
+  it('should be able to delete an feedback', async () => {
+    const [firstFeedback] = await feedback.get();
+
+    await expect(feedback.destroy(firstFeedback.id)).resolves.not.toThrow();
+  });
+
+  it('should not be able to delete and feedback without feedbacks storaged', async () => {
+    const feedbacks = await feedback.get();
+    await expect(feedback.destroy('test-123')).rejects.toThrow();
   });
 });
