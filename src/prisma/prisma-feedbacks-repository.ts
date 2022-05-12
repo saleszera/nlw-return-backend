@@ -21,4 +21,8 @@ export class PrismaFeeedbacksRepository implements FeedbacksRepository {
 
     return feedbacks;
   }
+
+  async destroy(id: string) {
+    await prisma.feedback.delete({ where: { id } });
+  }
 }

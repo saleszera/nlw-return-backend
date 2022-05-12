@@ -50,4 +50,22 @@ export class FeedbackUseCase {
 
     return feedbacks;
   }
+
+  async destroy(id: string) {
+    const feedbacks = await this.feedbacksRepository.get();
+
+    if (!feedbacks.length) {
+      throw new Error('There are no feedbacks');
+    }
+
+    const checkFeedbackExists = feedbacks.some(
+      (feedback) => feedback.id === id
+    );
+
+    if (!checkFeedbackExists) {
+      throw new Error(`There is not feedback with this ID ${id}`);
+    }
+
+    await this.feedbacksRepository.destroy(id);
+  }
 }
