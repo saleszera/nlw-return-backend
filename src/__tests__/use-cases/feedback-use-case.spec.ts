@@ -58,8 +58,64 @@ describe('Get feedbacks', () => {
   });
 });
 
+describe('Update an comment in feedback', () => {
+  it('should be able to update an feedback', async () => {
+    const [firstFeedback] = await feedback.get();
+
+    const newCommentInFeedback = {
+      id: firstFeedback.id,
+      comment: 'comment test',
+    };
+
+    await expect(feedback.put(newCommentInFeedback)).resolves.not.toThrow();
+  });
+
+  it('should not be able to update an feedback without comment', async () => {
+    const [firstFeedbackBeforeUpdate] = await feedback.get();
+
+    const newCommentInFeedback = {
+      id: firstFeedbackBeforeUpdate.id,
+      comment: '',
+    };
+
+    await expect(feedback.put(newCommentInFeedback)).resolves.not.toThrow();
+
+    const [firstFeedbackAfterUpdate] = await feedback.get();
+
+    expect(firstFeedbackBeforeUpdate).toEqual(firstFeedbackAfterUpdate);
+  });
+
+  it('should not be able to update an feedback with invalid ID', async () => {
+    const newCommentInFeedback = {
+      id: 'test-123',
+      comment: 'comment test',
+    };
+
+    await expect(feedback.put(newCommentInFeedback)).rejects.toThrow();
+  });
+
+  it('should not be able to update an feedback without feedbacks storaged', async () => {
+    const [firstFeedback] = await feedback.get();
+
+    await feedback.destroy(firstFeedback.id);
+
+    const newCommentInFeedback = {
+      id: 'test-123',
+      comment: 'comment test',
+    };
+
+    await expect(feedback.put(newCommentInFeedback)).rejects.toThrow();
+  });
+});
+
 describe('Delete an feedback', () => {
   it('Should not be able to delete an feedback with invalid ID', async () => {
+    await feedback.create({
+      type: 'BUG',
+      comment: 'example comment',
+      screenshot: 'data:image/png;base64test',
+    });
+
     await expect(feedback.destroy('test-123')).rejects.toThrow();
   });
 

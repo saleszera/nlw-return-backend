@@ -3,6 +3,7 @@ import {
   FeedbacksRepository,
   FeedbackCreateData,
   FeedbackGetData,
+  FeedbackPutData,
 } from '../repositories/feedbacks-repository';
 
 export class PrismaFeeedbacksRepository implements FeedbacksRepository {
@@ -24,5 +25,9 @@ export class PrismaFeeedbacksRepository implements FeedbacksRepository {
 
   async destroy(id: string) {
     await prisma.feedback.delete({ where: { id } });
+  }
+
+  async put({ id, comment }: FeedbackPutData) {
+    await prisma.feedback.update({ where: { id }, data: { comment } });
   }
 }

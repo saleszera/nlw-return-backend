@@ -7,6 +7,11 @@ interface SubmitFeedbackCaseRequest {
   screenshot?: string;
 }
 
+interface PutFeedbackCaseRequest {
+  id: string;
+  comment?: string;
+}
+
 export class FeedbackUseCase {
   constructor(
     private feedbacksRepository: FeedbacksRepository,
@@ -49,6 +54,28 @@ export class FeedbackUseCase {
     const feedbacks = await this.feedbacksRepository.get();
 
     return feedbacks;
+  }
+
+  async put({ id, comment }: PutFeedbackCaseRequest) {
+    const feedbacks = await this.feedbacksRepository.get();
+
+    if (!feedbacks.length) {
+      throw new Error('There are no feedbacks');
+    }
+
+    const checkFeedbackExists = feedbacks.some(
+      (feedback) => feedback.id === id
+    );
+
+    if (!checkFeedbackExists) {
+      throw new Error(`There is not feedback with this ID ${id}`);
+    }
+
+    if (!comment) {
+      return;
+    }
+
+    await this.feedbacksRepository.put({ id, comment });
   }
 
   async destroy(id: string) {

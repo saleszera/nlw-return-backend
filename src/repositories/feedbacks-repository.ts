@@ -3,6 +3,10 @@ export interface FeedbackCreateData {
   comment: string;
   screenshot?: string;
 }
+export interface FeedbackPutData {
+  id: string;
+  comment: string;
+}
 
 export interface FeedbackGetData {
   id: string;
@@ -14,5 +18,6 @@ export interface FeedbackGetData {
 export interface FeedbacksRepository {
   create: (data: FeedbackCreateData) => Promise<void>;
   get: () => Promise<FeedbackGetData[]>;
+  put: (data: FeedbackPutData) => Promise<void>;
   destroy: (id: string) => Promise<void>;
 }

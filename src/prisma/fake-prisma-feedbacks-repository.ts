@@ -4,6 +4,7 @@ import {
   FeedbacksRepository,
   FeedbackCreateData,
   FeedbackGetData,
+  FeedbackPutData,
 } from '../repositories/feedbacks-repository';
 
 type Feedbacks = {
@@ -21,6 +22,19 @@ export class PrismaFeeedbacksRepository implements FeedbacksRepository {
 
   async get(): Promise<FeedbackGetData[]> {
     return feedbacks.data;
+  }
+
+  async put({ id, comment }: FeedbackPutData) {
+    const feedbackIndex = feedbacks.data.findIndex(
+      (feedback) => feedback.id === id
+    );
+
+    const currentFeedback = feedbacks.data[feedbackIndex];
+
+    feedbacks.data[feedbackIndex] = {
+      ...currentFeedback,
+      comment,
+    };
   }
 
   async destroy(id: string) {

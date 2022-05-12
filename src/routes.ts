@@ -49,3 +49,18 @@ routes.delete('/feedbacks/:id', async (req, res) => {
       .json({ data: { error: { code: 400, message: error.message } } });
   }
 });
+
+routes.put('/feedbacks/:id', async (req, res) => {
+  const { id } = req.params;
+  const { comment } = req.body;
+
+  try {
+    await feedbackUseCase.put({ id, comment });
+
+    return res.status(202).send();
+  } catch (error: any) {
+    return res
+      .status(400)
+      .json({ data: { error: { code: 400, message: error.message } } });
+  }
+});
