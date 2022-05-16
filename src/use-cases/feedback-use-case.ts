@@ -40,11 +40,20 @@ export class FeedbackUseCase {
 
     await this.mailAdapter.sendMail({
       subject: 'Novo feedback',
+      attachments: [
+        {
+          filename: 'feedback-screenshot.png',
+          path: screenshot,
+          encoding: 'base64',
+        },
+      ],
       body: [
-        '<div style="font-family: sans-serif; font-size: 16px; color: #222;">',
-        `<p>Tipo do feedback ${type}</p>`,
-        `<p>Comentário: ${comment}</p>`,
-        screenshot ? `<img src="${screenshot}" alt="${type}"/>` : '',
+        '<div style="font-family: sans-serif; font-size: 16px; color: #222;padding: 8px;letter-spacing: 1.5px;line-height: 18px;text-align: justify;">',
+        `<p>Tipo do feedback <strong>${type}</strong></p>`,
+        `<p><strong>Comentário:</strong> ${comment}</p>`,
+        screenshot
+          ? `<img src="${screenshot}" alt="${type}" style="max-width: 600px;border-radius: 4px;"/>`
+          : '',
         '</div>',
       ].join('\n'),
     });
